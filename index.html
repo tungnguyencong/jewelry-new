@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function convexHull(points) {
+        const n = points.length;
+        if (n < 3) {
+          return []; // Cần ít nhất 3 điểm để tạo thành đa giác
+        }
+
+        // Tìm điểm có giá trị y nhỏ nhất (điểm cực đại bên trái)
+        let minY = Infinity;
+        let minIndex = -1;
+
+        for (let i = 0; i < n; i++) {
+          const [x, y] = points[i];
+        }
+
+        // Sắp xếp các điểm theo góc tạo bởi đường thẳng nối với điểm cực đại bên trái
+        const sortedPoints = points.slice();
+        sortedPoints.sort((a, b) => {
+          const angleA = computeAngle(points[minIndex], a);
+          const angleB = computeAngle(points[minIndex], b);
+
+          return angleA - angleB;
+        });
+
+        // Xây dựng đa giác lồi lớn nhất
+        const hull = [sortedPoints[0], sortedPoints[1]];
+        for (let i = 2; i < n; i++) {
+          while (
+            hull.length > 1 &&
+            !isCounterClockwise(
+              hull[hull.length - 2],
+              hull[hull.length - 1],
+              sortedPoints[i]
+            )
+          ) {
+            hull.pop();
+          }
+          hull.push(sortedPoints[i]);
+        }
+        return hull;
+      }
+
+      function computeAngle(p1, p2) {
+        const [x1, y1] = p1;
+        const [x2, y2] = p2;
+        return Math.atan2(y2 - y1, x2 - x1);
+      }
+      function isCounterClockwise(p1, p2, p3) {
+        const [x1, y1] = p1;
+        const [x2, y2] = p2;
+        const [x3, y3] = p3;
+        const crossProduct = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
+        return crossProduct > 0;
+      }
+      // Sử dụng
+      const points = [
+        [-3, -2],
+        [-2, 2],
+        [-1, 1],
+        [2, -5],
+        [2, -1],
+        [1, 4],
+        [2, 2],
+        [3, 0],
+        [4, 5],
+        [6, 2],
+      ];
+      for (let i = 0; i < points.length; i++) {
+        console.log(
+          "A[" +
+            (i + 1) +
+            "]: " +
+            "(" +
+            points[i][0] +
+            ", " +
+            points[i][1] +
+            ")"
+        );
+      }
+      const convexHullPoints = convexHull(points);
+
+      for (let i = 0; i < convexHullPoints.length; i++) {
+        const p1 = convexHullPoints[i];
+        const p2 = convexHullPoints[(i + 1) % convexHullPoints.length];
+
+        console.log(
+          `Cạnh ${i + 1}: (${p1[0]}, ${p1[1]}) - (${p2[0]}, ${p2[1]})`
+        );
+      }
+    </script>
+  </body>
+</html>
